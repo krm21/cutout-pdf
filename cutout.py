@@ -10,6 +10,9 @@ class Cutout:
         self.image_list = [] # to chyba jednak nie
         self.pic_names = []
 
+    def is_done(self):
+        return len(self.pic_names) == 0
+
     def pop_image_name(self):
         return self.pic_names.pop(0)
 
@@ -41,18 +44,22 @@ class Cutout:
             self.image_list.append(cut(img, corners))
 
     def gen_pdf(self, foldername):   
-        pdfname = foldername.split(os.path.sep)[-1]
-        if pdfname == ".":
-            pdfname = "out"
-        self.image_list[0].save(f'{foldername}/{pdfname}.pdf', save_all=True, append_images=self.imagelist[1:])
+        pdfname = "out"
+        # pdfname = foldername.split(os.path.sep)[-1]
+        # if pdfname == ".":
+        #     pdfname = "out"
+        # self.image_list[0].save(f'{foldername}/{pdfname}.pdf', save_all=True, append_images=self.image_list[1:])
+        if len(self.image_list)>1:
+            self.image_list[0].save(f'{foldername}/{pdfname}.pdf', save_all=True, append_images=self.image_list[1:])
+        else:
+            self.image_list[0].save(f'{foldername}/{pdfname}.pdf', save_all=True)
 
     def cut_img(self, img, corners):
-        return img.crop((corners["x1"], corners["y1"], corners["x2"], corners["y2"]))
-        
-        # if len(imagelist)>1:
-        #     imagelist[0].save(f'{foldername}/{pdfname}.pdf', save_all=True, append_images=imagelist[1:])
-        # else:
-        #     imagelist[0].save(f'{foldername}/{pdfname}.pdf', save_all=True)
+        rv = img.crop(
+            (corners["x1"], corners["y1"], corners["x2"], corners["y2"])
+        )
+        rv = rv.convert('RGB')
+        return rv
 
 
 def cut(img_name, corners):
@@ -90,9 +97,6 @@ def gen_pdf(foldername, corners):
 
 def main(corners):
     gen_pdf(".", corners)
-    # for dirr in os.walk("."):
-    #     print(dirr)
-    #     gen_pdf(dirr[0], corners)
 
 if __name__ == '__main__':
-    main({"x1": 475, "y1": 150, "x2": 1443, "y2": 877})
+    pass
