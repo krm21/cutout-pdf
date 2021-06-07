@@ -19,8 +19,6 @@ class Application(Tk):
 
         self.start = None
 
-        # self.label = Label(self.body, text='Open a folder containing images to be converted to PDF...').pack(side=BOTTOM, expand=YES, fill=BOTH)
-
     def set_up_frames(self):
         self.topbar = Frame(self)
         self.topbar.pack(side=TOP, expand=NO, fill=BOTH)
@@ -52,9 +50,7 @@ class Application(Tk):
         self.canvas.bind("<ButtonRelease-1>", self.stop, '+')
 
     def draw(self, start, end):
-        """Draw the rectangle"""
-        return self.canvas.create_rectangle(*(list(start)+list(end)),
-        fill= "", width= 2, dash= (1, 2), outline= "black")
+        return self.canvas.create_rectangle(*(list(start)+list(end)), fill= "", width= 2, dash= (1, 2), outline= "red")
 		
     def update(self, event):
         if not self.start:
@@ -84,29 +80,34 @@ class Application(Tk):
     def load_first_pic(self, path):
         self.path = path
         self.set_up_canvas()
-        self.cutout.get_list_of_image_names(path)
+        # self.cutout.get_list_of_image_names(path)
         self.load_pic(self.cutout.pop_image_name())
         self.skipbutton["state"] = ACTIVE
 
     def opendialog(self):
         self.path = filedialog.askdirectory(initialdir = "/",title = "Select directory")
-        self.load_first_pic(self.path)
+        self.cutout.get_list_of_image_names(self.path)
+        if not self.cutout.is_done():
+            self.load_first_pic(self.path)
+        else:
+            tkinter.messagebox.showwarning(title="Warning", message="Folder does not contain any images.")
 
     def save_page(self):
-        print(self.loaded_image)
-        self.cutout.push_image(self.cutout.cut_img(self.loaded_image, self.corners))
-        if not self.cutout.is_done():
-            self.load_pic(self.cutout.pop_image_name())
-            self.item = self.draw([self.corners["x1"], self.corners["y1"]], [self.corners["x2"], self.corners["y2"]])
-        else:
-            self.save_and_close()
-            tkinter.messagebox.showinfo('Success!','The pdf has been created!')
-            self.destroy()
+        if self.loaded_image.height > max(self.corners["y1"], self.corners["y2"]) and self.loaded_image.width > max(self.corners["x1"], self.corners["x2"]):
+            self.cutout.push_image(self.cutout.cut_img(self.loaded_image, self.corners))
+            if not self.cutout.is_done():
+                self.load_pic(self.cutout.pop_image_name())
+                self.item = self.draw([self.corners["x1"], self.corners["y1"]], [self.corners["x2"], self.corners["y2"]])
+            else:
+                self.save_and_close()
+                tkinter.messagebox.showinfo('Success!','The pdf has been created!')
+                self.destroy()
+        else: 
+            self.canvas.delete(self.item)
 
     def save_all_pages(self):
         while not self.cutout.is_done():
             self.save_page()
-
 
     def skip_image(self):
         self.load_pic(self.cutout.pop_image_name())
@@ -114,16 +115,7 @@ class Application(Tk):
     def save_and_close(self):
         self.cutout.gen_pdf(self.path)
 
-
-
-app = Application()
-# app.overrideredirect(True) # removes title bar
-# topbar = Frame()
-# topbar.pack(side=TOP, expand=YES, fill=BOTH)
-# body = Frame()
-# opendirbutton = Button(topbar, text="Open directory").pack(side=LEFT, fill=Y)
-# body.pack(side=BOTTOM, expand=YES, fill=BOTH)
-app.geometry("1056x594")
-# app.maxsize(600, 400)
-# app.resizable(0, 0)
-app.mainloop()
+if __name__ == '__main__':
+    app = Application()
+    app.geometry("1056x594")
+    app.mainloop()
