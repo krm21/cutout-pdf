@@ -117,5 +117,6 @@ class Application(Tk):
 
 if __name__ == '__main__':
     app = Application()
+    app.title("CutoutPDF")
     app.geometry("1056x594")
     app.mainloop()
