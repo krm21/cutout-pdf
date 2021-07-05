@@ -1,9 +1,11 @@
 # Screenshots to PDF converter
 
-A python GUI program which helps you keep notes clean. It's main goal is to free your harddrive from zillions of screenshots. The program creates a PDF from all the images from the choosen folder and allows to trim the pictures so your PDF won't get bloated with MS Teams (or any other meaningless) frame.
+A python GUI program which helps you keep your notes free of extra content. Its main goal is to free your hard drive from zillions of screenshots. The program creates a PDF from all the images from the chosen folder and allows you to trim the pictures so your PDF won't get bloated with MS Teams (or any other meaningless) frame. 
 
 ## Running the program
 
--- tu trzeba będzie dać wymagania, może 
+Run `main.py`, choose a folder containing images, and select a frame that you want to save. Everything else is pretty much self-explanatory.
 
-Run `main.py`, everything else is pretty much self-explanatory. 
+![start window](/images/main_window.png)
+
+![frame selection window](/images/slide.png)
